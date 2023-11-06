@@ -42,6 +42,7 @@ public class User {
 	@Column(name = "password")
 	private String password;
 	
+	// 1人のユーザーは1つのロールに属するが、1つのロールは複数のユーザーを持てるので「多対一」
 	@ManyToOne
 	@JoinColumn(name = "role_id")
 	private Role role;
