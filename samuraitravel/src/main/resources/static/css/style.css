@@ -68,6 +68,7 @@ footer {
 	/* 改行文字で行を折り返す */
 	white-space: pre-wrap;
 }
+<<<<<<< HEAD
 
 .samuraitravel-link-danger {
 	color: #f2594b;
@@ -90,6 +91,8 @@ footer {
 	background-color: #5196a6;
 }
 
+=======
+>>>>>>> parent of 832e41d (up to chapter18)
 @media screen and (min-width: 1400px){
 	.samuraitravel-container {
 		max-width: 1200px;
