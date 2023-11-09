@@ -2,6 +2,8 @@ package com.example.samuraitravel.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -21,7 +23,7 @@ public class WebSecurityConfig {
 			.authorizeHttpRequests((requests) -> requests
 				.requestMatchers("/css/**", "/images/**", "/js/**", "/storage/**", "/", "/signup/**").permitAll() // 全てのユーザーにアクセスを許可するURL
 				.requestMatchers("/admin/**").hasRole("ADMIN") // 管理者にのみアクセスを許可するURL
-				.anyRequest().authenticated() // 上記以外のURLはログインが必要（会員または管理者のどちらでもOK）
+				.anyRequest().authenticated() // 上記以外@のURLはログインが必要（会員または管理者のどちらでもOK）
 			)
 			// ログイン関係
 			.formLogin((form) -> form
@@ -44,5 +46,11 @@ public class WebSecurityConfig {
 	@Bean
 	public PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
+	}
+	
+	// JavaMailSenderを後から追加したことによるエラーを回避
+	@Bean
+	public JavaMailSender javaMailSender() {
+		return new JavaMailSenderImpl();
 	}
 }
