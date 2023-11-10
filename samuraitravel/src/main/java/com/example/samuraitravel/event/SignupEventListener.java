@@ -38,7 +38,7 @@ public class SignupEventListener {
 		// 件名をセット
 		mailMessage.setSubject(subject);
 		// 本文をセット
-		mailMessage.setText(message + "/n" + confirmationUrl);
+		mailMessage.setText(message + "\n" + confirmationUrl);
 		javaMailSender.send(mailMessage);
 	}
 }
