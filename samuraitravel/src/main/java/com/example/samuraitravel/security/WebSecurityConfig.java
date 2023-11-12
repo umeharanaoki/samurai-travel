@@ -15,13 +15,13 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 @EnableMethodSecurity
 public class WebSecurityConfig {
-	
+		
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		http
 			// 誰にどのページへのアクセスを許可するかを設定
 			.authorizeHttpRequests((requests) -> requests
-				.requestMatchers("/css/**", "/images/**", "/js/**", "/storage/**", "/", "/signup/**").permitAll() // 全てのユーザーにアクセスを許可するURL
+				.requestMatchers("/css/**", "/images/**", "/js/**", "/storage/**", "/", "/signup/**", "/houses", "/house/{id}").permitAll() // 全てのユーザーにアクセスを許可するURL
 				.requestMatchers("/admin/**").hasRole("ADMIN") // 管理者にのみアクセスを許可するURL
 				.anyRequest().authenticated() // 上記以外@のURLはログインが必要（会員または管理者のどちらでもOK）
 			)
