@@ -7,6 +7,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
+// 予約フォームから予約内容の確認ページに入力内容を渡す
 @Data
 public class ReservationInputForm {
     @NotBlank(message = "チェックイン日とチェックアウト日を選択してください。")
