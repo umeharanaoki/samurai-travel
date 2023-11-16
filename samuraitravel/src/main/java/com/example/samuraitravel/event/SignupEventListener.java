@@ -15,9 +15,9 @@ public class SignupEventListener {
 	private final VerificationTokenService verificationTokenService;
 	private final JavaMailSender javaMailSender;
 	
-	public SignupEventListener(VerificationTokenService verificationTokenService, JavaMailSender javaMailSender) {
+	public SignupEventListener(VerificationTokenService verificationTokenService, JavaMailSender mailSender) {
 		this.verificationTokenService = verificationTokenService;
-		this.javaMailSender = javaMailSender;
+		this.javaMailSender = mailSender;
 	}
 	
 	@EventListener

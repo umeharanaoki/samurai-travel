@@ -77,6 +77,7 @@ public class AuthController {
 			User user = verificationToken.getUser();
 			userService.enableUser(user);
 			String successMessage = "会員登録が完了しました。";
+			model.addAttribute("successMessage", successMessage);
 		} else {
 			String errorMessage = "トークンが無効です。";
 			model.addAttribute("errorMessage", errorMessage);
