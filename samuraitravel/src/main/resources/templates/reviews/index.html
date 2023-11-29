@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+	<head>
+		<div th:replace="~{fragment :: meta}"></div>
+		
+		<div th:replace="~{fragment :: styles}"></div>
+        
+        <!-- Flatpickr -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+        
+        <title>レビュー一覧</title>
+	</head>
+	<body>
+		<div class="samuraitravel-wrapper">
+			<div th:replace="~{fragment :: header}"></div>
+			
+			<main>
+				<div class="container pt-4 pb-5 samuraitravel-container">
+                    <div class="row justify-content-center">
+                        <div class="col-xxl-9 col-xl-10 col-lg-11">
+                            <nav class="mb-4" style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+                                <ol class="breadcrumb mb-0">                        
+                                    <li class="breadcrumb-item"><a th:href="@{/}">ホーム</a></li>
+                                    <li class="breadcrumb-item"><a th:href="@{/houses}">民宿一覧</a></li>
+                                    <li class="breadcrumb-item"><a th:href="@{/houses/show}">民宿詳細</a></li>
+                                    <li class="breadcrumb-item active" aria-current="page">レビュー一覧</li>
+                                </ol>
+                            </nav> 
+                            
+                            <h1 class="mb-4 text-center" th:text="${house.getName()} + 'のレビュー一覧'"></h1>
+                            
+                            <div class="container">
+								<div class="row">
+									<!-- レビューをカード表示する -->
+									<div th:each="review : ${reviewPage}" class="col-md-6 mb-4">
+										<div class="card">
+											<div class="card-body">
+												<h5 class="card-title" th:text="${review.user.getName()}"></h5>
+												<p class="card-text">
+													<span th:text="${review.getEvaluation()}"></span>
+												</p>
+												<p class="card-text">
+													<span th:text="${review.getCreatedAt}"></span>
+												</p>
+												<p class="card-text">
+													<span th:text="${review.getReviewContents}"></span>
+												</p>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							
+							<!-- ページネーション -->
+							<div th:if="${reviewPage.getTotalPages() > 1}" class="d-flex justify-content-center">
+								<nav aria-label="民宿一覧ページ">
+									<ul class="pagination">
+										<li class="page-item">
+											<span th:if="${reviewPage.isFirst()}" class="page-link disabled">前</span>
+											<a th:unless="${reviewPage.isFirst()}" th:href="@{/houses/__${house.getId()}__/reviews(page = ${reviewPage.getNumber() - 1})}" class="page-link samuraitravel-page-link">前</a>
+										</li>
+										<li th:each="i : ${#numbers.sequence(0, reviewPage.getTotalPages() - 1)}" class="page-item">
+											<span th:if="${i == reviewPage.getNumber()}" class="page-link active samuraitravel-active" th:text="${i + 1}"></span>
+											<a th:unless="${i == reviewPage.getNumber()}" th:href="@{/houses/__${house.getId()}__/reviews(page = ${i})}" class="page-link samuraitravel-page-link" th:text="${i + 1}"></a>
+										</li>
+										<li class="page-item">                        
+           							    	<span th:if="${reviewPage.isLast()}" class="page-link disabled">次</span>
+               								<a th:unless="${reviewPage.isLast()}" th:href="@{/houses/__${house.getId()}__/reviews(page = ${reviewPage.getNumber() + 1})}" class="page-link samuraitravel-page-link">次</a>
+        							    </li>
+									</ul>
+								</nav>
+								
+							</div>
+                        </div>
+                    </div>
+				</div>                                                           
+			</main>
+			<!-- footer -->
+			<div th:replace="~{fragment :: footer}"></div>
+		</div>
+		<div th:replace="~{fragment :: scripts}"></div>
+	</body>
+</html>

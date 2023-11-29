@@ -1,5 +1,8 @@
 package com.example.samuraitravel.controller;
+import java.util.List;
+
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.web.PageableDefault;
@@ -11,16 +14,20 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.example.samuraitravel.entity.House;
+import com.example.samuraitravel.entity.Review;
 import com.example.samuraitravel.form.ReservationInputForm;
 import com.example.samuraitravel.repository.HouseRepository;
+import com.example.samuraitravel.repository.ReviewRepository;
 
 @Controller
 @RequestMapping("/houses")
 public class HouseController {
 	private final HouseRepository houseRepository;
+	private final ReviewRepository reviewRepository;
 	
-	public HouseController(HouseRepository houseRepository) {
+	public HouseController(HouseRepository houseRepository, ReviewRepository reviewRepository) {
 		this.houseRepository = houseRepository;
+		this.reviewRepository = reviewRepository;
 	}
 	
 	@GetMapping
@@ -74,10 +81,14 @@ public class HouseController {
 	@GetMapping("/{id}")
 	public String show(@PathVariable(name = "id") Integer id, Model model) {
 		House house = houseRepository.getReferenceById(id);
+		// 最新のレビューをhouse_idをもとに取得し、6件表示する
+		List<Review> reviews = reviewRepository.findByHouseIdOrderByCreatedAtDesc(id, PageRequest.of(0, 6));
 		
 		model.addAttribute("house", house);
 		// フォームクラスのインスタンスをビューに渡す
 		model.addAttribute("reservationInputForm", new ReservationInputForm());
+		// レビューをビューに渡す
+		model.addAttribute("reviews", reviews);
 		
 		return "houses/show";
 	}

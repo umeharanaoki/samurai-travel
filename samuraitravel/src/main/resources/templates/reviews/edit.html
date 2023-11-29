@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+	<head>
+		<div th:replace="~{fragment :: meta}"></div>
+		
+		<div th:replace="~{fragment :: styles}"></div>
+        
+        <!-- Flatpickr -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+        
+        <title>レビュー編集</title>
+	</head>
+	<body>
+		<div class="samuraitravel-wrapper">
+			<div th:replace="~{fragment :: header}"></div>
+			
+			<main>
+				<div class="container pt-4 pb-5 samuraitravel-container">
+                    <div class="row justify-content-center">
+                        <div class="col-xxl-9 col-xl-10 col-lg-11">
+                            <nav class="mb-4" style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+                                <ol class="breadcrumb mb-0">                        
+                                    <li class="breadcrumb-item"><a th:href="@{/}">ホーム</a></li>
+                                    <li class="breadcrumb-item"><a th:href="@{/houses}">民宿一覧</a></li>
+                                    <li class="breadcrumb-item"><a th:href="@{/houses/__${id}__}">民宿詳細</a></li>
+                                    <li class="breadcrumb-item active" aria-current="page">レビュー編集</li>
+                                </ol>
+                            </nav> 
+                            
+                            <h1 class="mb-4 text-center" th:text="${house.getName()} + 'のレビュー編集'"></h1>
+                            
+                            <form method="post" th:action="@{/houses/__${house.getId()}__/reviews/__${reviewId}__/update}" th:object="${reviewEditForm}" enctype="multipart/form-data">
+								
+								
+								
+								<div class="form-group row mb-3">
+									<div class="col-md-4">
+										<label for="evaluation" class="col-form-label text-md-left fw-bold">評価</label>
+									</div>
+								</div>
+								<div class="col-md-8">
+									<div th:if="${#fields.hasErrors('evaluation')}" class="text-danger small mb-2" th:errors="*{evaluation}"></div>
+									<select th:field="*{evaluation}" class="form-control form-select">  
+                                    	<option value="" hidden>選択してください</option>   
+                                    	<option value="&#9733;&#9733;&#9733;&#9733;&#9733;">&#9733;&#9733;&#9733;&#9733;&#9733;</option>
+                                    	<option value="&#9733;&#9733;&#9733;&#9733;&#9734;">&#9733;&#9733;&#9733;&#9733;&#9734;</option>
+                                    	<option value="&#9733;&#9733;&#9733;&#9734;&#9734;">&#9733;&#9733;&#9733;&#9734;&#9734;</option>
+                                    	<option value="&#9733;&#9733;&#9734;&#9734;&#9734;">&#9733;&#9733;&#9734;&#9734;&#9734;</option>
+                                    	<option value="&#9733;&#9734;&#9734;&#9734;&#9734;">&#9733;&#9734;&#9734;&#9734;&#9734;</option>
+									</select>
+								</div>
+								
+								<div class="form-group row mb-3">
+									<div class="col-md-4">
+										<label for="reviewContents" class="col-form-label text-md-left fw-bold">コメント</label>
+									</div>
+								</div>
+								<div class="col-md-8">
+									<div th:if="${#fields.hasErrors('reviewContents')}" class="text-danger small mb-2" th:errors="*{reviewContents}"></div>
+									<textarea class="form-control" th:field="*{reviewContents}" cols="30" rows="5"></textarea>
+								</div>
+								
+								<div class="form-group">
+									<button type="submit" th:action="@{/houses/__${house.getId()}__/reviews/__${reviewId}__/update}" class="btn text-white shadow-sm w-25 samuraitravel-btn">更新</button>
+								</div>
+								
+								
+								
+                            </form>
+                        </div>
+                    </div>
+				</div>                                                           
+			</main>
+		</div>
+	</body>
+</html>
