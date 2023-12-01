@@ -25,6 +25,12 @@
                                     <li class="breadcrumb-item"><a th:href="@{/houses}">民宿一覧</a></li>
                                     <li class="breadcrumb-item active" aria-current="page">民宿詳細</li>
                                 </ol>
+                                <div th:if="${favorite == null or favorite.getStatus() eq 0}">
+                                	<a id="favoriteStatus" sec:authorize="isAuthenticated()" href="javascript:void(0);" th:onclick="|toggleFavorite('__${house.getId()}__')|" >&#9825;お気に入り追加</a>
+                                </div>
+                                <div th:if="${favorite.getStatus() eq 1}">
+                                	<a id="favoriteStatus" sec:authorize="isAuthenticated()" href="javascript:void(0);" th:onclick="|toggleFavorite('__${house.getId()}__')|">&#9829;お気に入り解除</a>
+                                </div>
                             </nav> 
                             
                             <h1 class="mb-4 text-center" th:text="${house.getName()}"></h1>                                                           
@@ -154,8 +160,8 @@
                             <!-- レビューの追加 -->
                             <h1 class="mb-4 text-center">レビュー</h1>
                             <!-- ログイン時のみ出現する投稿ボタン -->
-                            <div sec:authorize="isAuthenticated()" class="form-group">
-								<button type="button" th:onclick="|location.href='@{__${id}__/reviews/post}'|" class="btn text-white shadow-sm w-100 samuraitravel-btn">	レビューを投稿する</button>
+                            <div sec:authorize="isAuthenticated()" class="d-flex justify-content-center form-group">
+								<button type="button" th:onclick="|location.href='@{__${id}__/reviews/post}'|" class="btn text-white shadow-sm w-100 samuraitravel-btn">レビューを投稿する</button>
 							</div>
                             
                             <div class="container">
@@ -166,7 +172,7 @@
 											<div class="card-body">
 												<h5 class="card-title" th:text="${review.user.getName()}"></h5>
 												<!-- ログイン者のuserIDと投稿者のuserIDが同じ時だけ表示する -->
-													<div >
+													<div sec:authorize="isAuthenticated()" th:if="${#authentication.principal.user.id == review.getUser().getId()}">
 														<a th:href="@{/houses/__${house.getId()}__/reviews/__${review.getId()}__/edit}">編集</a>
 														<a href="#" class="samuraitravel-link-danger" data-bs-toggle="modal" th:data-bs-target="${'#deleteReviewModal' + review.getId()}">削除</a>
 													</div>
@@ -200,12 +206,16 @@
 											</div>
 										</div>
 									</div>
-									<!-- レビューがない場合の表示 
-									<div th:unless="${reviews != null">まだレビューがありません。</div> -->
+									<!-- レビューがない場合の表示 -->
+<!--									<div th:if="${reviews.empty}">-->
+<!--										<p>まだレビューがありません。</p>-->
+<!--									</div>-->
 								</div>
 							</div>
-							<!-- レビューがない場合は表示しないようにする -->
-							<a th:href="@{__${id}__/reviews}" class="mb-4 text-center">すべてのレビューを見る</a>
+<!--							 レビューがない場合は表示しないようにする -->
+<!--							<div th:unless="${reviews.empty}">-->
+<!--								<a th:href="@{__${id}__/reviews}" class="mb-4 text-center">すべてのレビューを見る</a>-->
+<!--							</div>-->
                         </div>
                     </div>
                 </div>
@@ -218,8 +228,11 @@
         <div th:replace="~{fragment :: scripts}"></div>  
         
         <!-- Flatpickr -->
-         <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-         <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ja.js"></script>
-         <script th:src="@{/js/flatpickr.js}"></script> 
-  </body>
+        <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+        <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ja.js"></script>
+        <script th:src="@{/js/flatpickr.js}"></script>
+        <script th:src="@{/js/favorite.js}"></script>
+		<meta th:name="_csrf" th:content="${_csrf.token}"/>
+		<meta th:name="_csrf_header" th:content="${_csrf.headerName}"/>
+    </body>
 </html>

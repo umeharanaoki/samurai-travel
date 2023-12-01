@@ -6,6 +6,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,21 +14,27 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.example.samuraitravel.entity.Favorite;
 import com.example.samuraitravel.entity.House;
 import com.example.samuraitravel.entity.Review;
+import com.example.samuraitravel.entity.User;
 import com.example.samuraitravel.form.ReservationInputForm;
+import com.example.samuraitravel.repository.FavoriteRepository;
 import com.example.samuraitravel.repository.HouseRepository;
 import com.example.samuraitravel.repository.ReviewRepository;
+import com.example.samuraitravel.security.UserDetailsImpl;
 
 @Controller
 @RequestMapping("/houses")
 public class HouseController {
 	private final HouseRepository houseRepository;
 	private final ReviewRepository reviewRepository;
+	private final FavoriteRepository favoriteRepository;
 	
-	public HouseController(HouseRepository houseRepository, ReviewRepository reviewRepository) {
+	public HouseController(HouseRepository houseRepository, ReviewRepository reviewRepository, FavoriteRepository favoriteRepository) {
 		this.houseRepository = houseRepository;
 		this.reviewRepository = reviewRepository;
+		this.favoriteRepository = favoriteRepository;
 	}
 	
 	@GetMapping
@@ -79,16 +86,21 @@ public class HouseController {
 	}
 	
 	@GetMapping("/{id}")
-	public String show(@PathVariable(name = "id") Integer id, Model model) {
+	public String show(@PathVariable(name = "id") Integer id, @AuthenticationPrincipal UserDetailsImpl userDetailsImpl, Model model) {
 		House house = houseRepository.getReferenceById(id);
+		User user = userDetailsImpl.getUser();
+		Favorite favorite = favoriteRepository.findByUserAndHouse(user, house);
 		// 最新のレビューをhouse_idをもとに取得し、6件表示する
 		List<Review> reviews = reviewRepository.findByHouseIdOrderByCreatedAtDesc(id, PageRequest.of(0, 6));
 		
 		model.addAttribute("house", house);
+		model.addAttribute("user", user);
 		// フォームクラスのインスタンスをビューに渡す
 		model.addAttribute("reservationInputForm", new ReservationInputForm());
 		// レビューをビューに渡す
 		model.addAttribute("reviews", reviews);
+		// お気に入り情報をビューに渡す
+		model.addAttribute("favorite", favorite);
 		
 		return "houses/show";
 	}
