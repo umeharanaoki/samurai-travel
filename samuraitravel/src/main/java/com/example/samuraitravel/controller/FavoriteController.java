@@ -1,43 +1,40 @@
 package com.example.samuraitravel.controller;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 
 import com.example.samuraitravel.entity.Favorite;
-import com.example.samuraitravel.entity.House;
 import com.example.samuraitravel.entity.User;
 import com.example.samuraitravel.repository.FavoriteRepository;
 import com.example.samuraitravel.repository.HouseRepository;
 import com.example.samuraitravel.security.UserDetailsImpl;
-import com.example.samuraitravel.service.FavoriteService;
 
-// ページ遷移したくないときは@RestControllerを指定
-@RestController
+@Controller
 public class FavoriteController {
-	private final FavoriteService favoriteService;
-	private final FavoriteRepository favoriteRepository;
-	private final HouseRepository houseRepository;
+	public final FavoriteRepository favoriteRepository;
+	public final HouseRepository houseRepository;
 	
-	FavoriteController(FavoriteService favoriteService, FavoriteRepository favoriteRepository, HouseRepository houseRepository) {
-		this.favoriteService = favoriteService;
+	FavoriteController(FavoriteRepository favoriteRepository, HouseRepository houseRepository) {
 		this.favoriteRepository = favoriteRepository;
 		this.houseRepository = houseRepository;
 	}
 	
-	// Ajaxからのリクエストを受け取る
-	@PostMapping("/houses/show/{id}/favorites/toggle")
-	public Integer toggleFavorite(@PathVariable(name = "id") Integer houseId, 
-							   @AuthenticationPrincipal UserDetailsImpl userDetailsImpl)
-	{
+	@GetMapping("/favorites")
+	public String index(@PageableDefault(page = 0, size = 10, sort = "id", direction = Direction.ASC) Pageable pageable, @AuthenticationPrincipal UserDetailsImpl userDetailsImpl ,Model model) {
 		User user = userDetailsImpl.getUser();
-		House house = houseRepository.getReferenceById(houseId);
-		// Serviceのメソッドを使用してデータベースの操作
-		favoriteService.toggleFavorite(user, house);
-		
-		Favorite favorite = favoriteRepository.findByUserAndHouse(user, house);
-		// ビューではなくデータを返す
-		return favorite.getStatus();
+		Page<Favorite> favoritePage = favoriteRepository.findByUserAndStatus(user, 1, pageable);
+				
+//		List<House> favoriteHouses = favorites.stream()
+//            .map(favorite -> houseRepository.getReferenceById(favorite.getHouse().getId()))
+//            .collect(Collectors.toList());
+		model.addAttribute("favoritePage", favoritePage);
+//		model.addAttribute("favoriteHouses", favoriteHouses);
+		return "favorites/index";
 	}
 }

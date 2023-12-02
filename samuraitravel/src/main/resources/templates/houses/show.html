@@ -28,7 +28,7 @@
                                 <div th:if="${favorite == null or favorite.getStatus() eq 0}">
                                 	<a id="favoriteStatus" sec:authorize="isAuthenticated()" href="javascript:void(0);" th:onclick="|toggleFavorite('__${house.getId()}__')|" >&#9825;お気に入り追加</a>
                                 </div>
-                                <div th:if="${favorite.getStatus() eq 1}">
+                                <div th:if="${favorite != null and favorite.getStatus() eq 1}">
                                 	<a id="favoriteStatus" sec:authorize="isAuthenticated()" href="javascript:void(0);" th:onclick="|toggleFavorite('__${house.getId()}__')|">&#9829;お気に入り解除</a>
                                 </div>
                             </nav> 
@@ -172,9 +172,11 @@
 											<div class="card-body">
 												<h5 class="card-title" th:text="${review.user.getName()}"></h5>
 												<!-- ログイン者のuserIDと投稿者のuserIDが同じ時だけ表示する -->
-													<div sec:authorize="isAuthenticated()" th:if="${#authentication.principal.user.id == review.getUser().getId()}">
+													<div sec:authorize="isAuthenticated()">
+														<div th:if="${user != null and #authentication.principal.user.id == review.getUser().getId()}">
 														<a th:href="@{/houses/__${house.getId()}__/reviews/__${review.getId()}__/edit}">編集</a>
 														<a href="#" class="samuraitravel-link-danger" data-bs-toggle="modal" th:data-bs-target="${'#deleteReviewModal' + review.getId()}">削除</a>
+														</div>
 													</div>
 													
 													<!-- 削除用モーダル -->
@@ -207,15 +209,15 @@
 										</div>
 									</div>
 									<!-- レビューがない場合の表示 -->
-<!--									<div th:if="${reviews.empty}">-->
-<!--										<p>まだレビューがありません。</p>-->
-<!--									</div>-->
+									<div th:if="${reviews.empty}">
+										<p>まだレビューがありません。</p>
+									</div>
 								</div>
 							</div>
-<!--							 レビューがない場合は表示しないようにする -->
-<!--							<div th:unless="${reviews.empty}">-->
-<!--								<a th:href="@{__${id}__/reviews}" class="mb-4 text-center">すべてのレビューを見る</a>-->
-<!--							</div>-->
+							<!--レビューがない場合は表示しないようにする -->
+							<div th:unless="${reviews.empty}">
+								<a th:href="@{__${id}__/reviews}" class="mb-4 text-center">すべてのレビューを見る</a>
+							</div>
                         </div>
                     </div>
                 </div>
